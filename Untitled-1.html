@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    
+
+
+    <title>Tier Maker</title>
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <header id="top-header">
+        <img src="https://tiermaker.com/images/tiermaker-logo.png" alt="Tier Maker Logo">
+    </header>
+
+    <section class="tier">
+        <div class="row"><aside class="label" style="--level: var(--color-s)"><span contenteditable="true">S</span></aside></div>
+        <div class="row"><aside class="label" style="--level: var(--color-a)"><span contenteditable="true">A</span></aside></div>
+        <div class="row"><aside class="label" style="--level: var(--color-b)"><span contenteditable="true">B</span></aside></div>
+        <div class="row"><aside class="label" style="--level: var(--color-c)"><span contenteditable="true">C</span></aside></div>
+        <div class="row"><aside class="label" style="--level: var(--color-d)"><span contenteditable="true">D</span></aside></div>
+        <div class="row"><aside class="label" style="--level: var(--color-e)"><span contenteditable="true">E</span></aside></div>
+    </section>
+
+    <section id="selector-items"></section>
+
+    <script type="module">
+        const $ = el => document.querySelector(el);
+        const $$ = el => document.querySelectorAll(el);
+
+        const itemsSection = $('#selector-items');
+
+        function createItem(src) {
+            const imgElement = document.createElement('img');
+            imgElement.draggable = true;
+            imgElement.src = src;
+            imgElement.className = 'item-image';
+            imgElement.addEventListener('dragstart', handleDragStart);
+            imgElement.addEventListener('dragend', handleDragEnd);
+            itemsSection.appendChild(imgElement);
+            return imgElement;
+        }
+
+        let draggedElement = null;
+        let sourceContainer = null;
+
+        const rows = $$('.tier .row');
+
+        rows.forEach(row => {
+            row.addEventListener('dragover', handleDragOver);
+            row.addEventListener('drop', handleDrop);
+            row.addEventListener('dragleave', handleDragLeave);
+        });
+
+        itemsSection.addEventListener('dragover', handleDragOver);
+        itemsSection.addEventListener('drop', handleDrop);
+        itemsSection.addEventListener('dragleave', handleDragLeave);
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const { currentTarget, dataTransfer } = event;
+            if (sourceContainer && draggedElement) {
+                sourceContainer.removeChild(draggedElement);
+            }
+            if (draggedElement) {
+                const src = dataTransfer.getData('text/plain');
+                const imgElement = createItem(src);
+                currentTarget.appendChild(imgElement);
+            }
+            currentTarget.classList.remove('drag-over');
+            currentTarget.querySelector('.drag-preview')?.remove();
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            const { currentTarget } = event;
+            if (sourceContainer === currentTarget) return;
+            currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            const { currentTarget } = event;
+            currentTarget.classList.remove('drag-over');
+            currentTarget.querySelector('.drag-preview')?.remove();
+        }
+
+        function handleDragStart(event) {
+            draggedElement = event.target;
+            sourceContainer = draggedElement.parentNode;
+            event.dataTransfer.setData('text/plain', draggedElement.src);
+        }
+
+        function handleDragEnd(event) {
+            draggedElement = null;
+            sourceContainer = null;
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
