@@ -65,18 +65,77 @@ body {
     border: 1px solid #666;
     width: 100%;
     height: 150px;
+    margin-top: 80px;
     margin-bottom: 100px;
     display: flex;
     flex-wrap: wrap;
 }
 
 .item-image {
-    width: 50px;
-    height: 50px;
+    display: block;
+    width: 80px;
+    height: 90px;
     object-fit: cover;
-    background: #fff;
+    border-radius: 4px;
     cursor: grab;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+
 }
+
+.item-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.item-container {
+    position: relative;
+    display: inline-block;
+    
+}
+
+.item-tooltip {
+    visibility: hidden;
+    width: max-content;
+    max-width: 1000px;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 8px;
+    position: absolute;
+    z-index: 100;
+    bottom: 100%; /* Aparece arriba de la imagen */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 12px;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Flecha del tooltip */
+.item-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+}
+
+/* Mostrar tooltip al hacer hover */
+.item-container:hover .item-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+
 
 @media (max-width: 600px) {
 .label {
@@ -86,8 +145,10 @@ font-size: 16px; /* Texto más pequeño */
 }
 
 .item-image {
-width: 40px;
-height: 40px;
+    width: 70px;  /* Un poco más pequeño en móviles */
+    height: 80px;
+    margin: 1px;  /* Mantienes el espaciado ajustado */
+    
 }
 
 body {

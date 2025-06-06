@@ -34,22 +34,36 @@ async function getTopAnime(limit = 100) { //Obtener los mejores animes de MyAnim
 }
 
 
-async function showRandomAnimes(count = 25) {  // Mostrar las imágenes aleatorias en la página 
+async function showRandomAnimes(count = 25) {
     const container = document.getElementById("selector-items");
-    container.innerHTML = "<p>Cargando animes...</p>"; // Mensaje de carga
+    container.innerHTML = "<p>Seleccionando animes aleatoriamente...</p>"; // Mensaje de carga
     
-    const animes = await getTopAnime(300); // Numero que indica el TOP del cual se están eligiendo los animes
+    const animes = await getTopAnime(50); // Número que indica el TOP del cual se están eligiendo los animes
     const randomAnimes = animes.sort(() => 0.5 - Math.random()).slice(0, count);
     
     container.innerHTML = "";
     randomAnimes.forEach(anime => {
+        // Contenedor para imagen + tooltip
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "item-container";
+        
+        // Crear imagen
         const img = document.createElement("img");
         img.src = anime.image;
         img.className = "item-image";
         img.draggable = true;
-        container.appendChild(img);
+        
+        // Crear tooltip con el título
+        const tooltip = document.createElement("span");
+        tooltip.className = "item-tooltip";
+        tooltip.textContent = anime.title;
+        
+        // Ensamblar
+        imgContainer.appendChild(img);
+        imgContainer.appendChild(tooltip);
+        container.appendChild(imgContainer);
     });
 }
 
 // 📌 **Se ejecuta automáticamente al cargar la página**
- showRandomAnimes(15);
+ showRandomAnimes(30);
