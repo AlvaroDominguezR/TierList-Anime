@@ -48,6 +48,11 @@ body {
     position: relative;
     flex-direction: row;
     border-bottom: 1px solid #111;
+    transition: background-color 0.2s;
+}
+
+.row.drag-over {
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
 .label {
@@ -60,6 +65,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s;
+}
+
+.row.drag-over .label {
+    transform: scale(1.05);
 }
 
 #selector-items {
@@ -70,6 +80,10 @@ body {
     margin-bottom: 100px;
     display: flex;
     flex-wrap: wrap;
+}
+
+.item-image.dragging {
+    opacity: 0.6;
 }
 
 .item-image {
@@ -102,14 +116,11 @@ body {
     flex-wrap: wrap;
     align-content: flex-start;
     background-color: rgba(255, 255, 255, 0.03);
-    transition: all 0.2s;
+    padding: 5px;
     }
-
 
 .row.drag-over .drop-zone {
     background-color: rgba(255, 255, 255, 0.1);
-    outline: 2px dashed rgba(255, 255, 255, 0.3);
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Ajuste para las imágenes en los tiers */
@@ -156,6 +167,11 @@ body {
 .item-container:hover .item-tooltip {
     visibility: visible;
     opacity: 1;
+}
+
+#selector-items.drag-over {
+    background-color: rgba(255, 255, 255, 0.1);
+    outline: 2px dashed rgba(255, 255, 255, 0.3);
 }
 
 

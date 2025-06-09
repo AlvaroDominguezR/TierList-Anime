@@ -6,75 +6,121 @@
 
 
         //Funciones Drag and Drop
-        function handleDragStart(e) {
+        function handleDragStart(e) 
+        {
             if(!e.target.classList.contains('item-image')) return;
 
             draggedElement = e.target;
             sourceContainer = e.target.parentNode;
 
             //mejora visual opcional
-            e.target.style.opacity = '0.5';
+            draggedElement.classList.add('dragging');
             e.dataTransfer.setData('text/plain', e.target.src);
             e.dataTransfer.effectAllowed = 'move'; 
         }
 
-        function handleDragEnd(e) {
+        function handleDragEnd(e) 
+        {
             if (!e.target.classList.contains('item-image')) return;
-            e.target.style.opacity = '1';
+
+            draggedElement.classList.remove('dragging');
+            $$('.drag-over').forEach(el => el.classList.remove('drag-over'));
             draggedElement = null;
             sourceContainer = null;
-
-            // Limpia clases de feedback visual
-             $$('.drag-over').forEach(el => el.classList.remove('drag-over'));
         }
 
-        function handleDragOver(e) {
+        function handleDragOver(e) 
+        {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';    
         }
 
-        function handleDrop(e) {
+        function handleDrop(e) 
+        {
             e.preventDefault();
 
-            if(!draggedElement) return;
+           if(!draggedElement) return;
 
-            const dropZone = e.currentTarget.classList.contains('dropZone')
-                ? e.currentTarget
-                : e.currentTarget.closest('.drop-zone');
+           const target = e.currentTarget;
+    
+           const dropZone = target === $('#selector-items') // Determinar el destino (selector-items o tier)
+                ? target
+                : target.closest('.row')?.querySelector('.drop-zone')
 
             if(!dropZone) return;
 
-             // Mover el elemento al nuevo contenedor
-            if(sourceContainer && draggedElement) {
+            if(sourceContainer && draggedElement)  // Eliminar del contenedor original
+            {
                 sourceContainer.removeChild(draggedElement);
             }
 
-            dropZone.appendChild(draggedElement);
-            draggedElement.style.opacity = '1';
-            dropZone.classList.remove('drag-over');
+            if (dropZone.id === 'selector-items')
+            {
+                const newContainer = document.createElement('div');
+                newContainer.className = 'item-container';
+
+                const tooltip = document.createElement('span');
+                tooltip.className = 'item-tooltip';
+                tooltip.textContent = draggedElement.alt || draggedElement.title || 'Anime';
+
+                newContainer.appendChild(draggedElement);
+                newContainer.appendChild(tooltip);
+                dropZone.appendChild(newContainer);
+            }
+            else
+            {
+                dropZone.appendChild(draggedElement);
+            }
+        
+            draggedElement.classList.remove('dragging');
+            $$('.drag-over').forEach(el => el.classList.remove('drag-over')); // Limpiar clases
         }
 
-        function handleDragEnter(e) {
+        function handleDragEnter(e)
+        {
             e.preventDefault();
-            if(e.currentTarget === sourceContainer) return;
-            e.currentTarget.classList.add('drag-over');
+            const target = e.currentTarget;
+            
+            if(target.classList.contains('drop-zone') || target === $('#selector-items')) // Aplicar a rows o al selector-items
+            {
+                target.classList.add('drag-over');
+
+                if(target.classList.contains('drop-zone'))
+                {
+                    target.closest('.row').classList.add('drag-over');
+                }
+            }
         }
 
-        function handleDragLeave(e) {
+        function handleDragLeave(e)
+        {
             e.preventDefault();
-            e.currentTarget.classList.remove('drag-over');
+            const target = e.currentTarget;
+
+            if(target.classList.contains('drop-zone') || target === $('#selector-items')) // Remover de rows o del selector-items
+            {
+                target.classList.remove('drag-over');
+
+                if(target.classList.contains('drop-zone'))
+                {
+                    target.closest('.row').classList.remove('drag-over');
+                }
+            }
+               
         }
 
-        function setupDragAndDrop () {
+        function setupDragAndDrop ()
+        {
             const rows = $$('.tier .row');
             const itemsSection = $('#selector-items');
 
             rows.forEach(row => {
-                if(!row.querySelector('drop-zone')) {
-                    const dropZone = document.createElement('div');
-                    dropZone.className = 'drop-zone';
-                    row.appendChild(dropZone);
-                }
+                if(!row.querySelector('drop-zone'))
+                    {
+                        const dropZone = document.createElement('div');
+                        dropZone.className = 'drop-zone';
+                        row.appendChild(dropZone);
+                    }
 
                 const dropZone = row.querySelector('.drop-zone');
                 dropZone.addEventListener('dragover', handleDragOver);
@@ -90,15 +136,19 @@
 
             document.addEventListener('dragstart', (e) => 
             {
-                if(e.target.classList.contains('item-image')) {
-                    handleDragStart(e);
-                }
-            })
+                if(e.target.classList.contains('item-image'))
+                    {
+
+                        handleDragStart(e);
+                    }
+            });
 
             document.addEventListener('dragend', (e) => {
-                if(e.target.classList.contains('item-image')) {
-                    handleDragEnd(e);
-                }
+                if(e.target.classList.contains('item-image'))
+                    {
+
+                        handleDragEnd(e);
+                    }
             });
         }
         
@@ -143,7 +193,7 @@ async function showRandomAnimes(count = 25) {
     const container = $('#selector-items');
     container.innerHTML = "<p>Seleccionando animes aleatoriamente...</p>"; // Mensaje de carga
     
-    const animes = await getTopAnime(300); // Número que indica el TOP del cual se están eligiendo los animes
+    const animes = await getTopAnime(50); // Número que indica el TOP del cual se están eligiendo los animes
     const randomAnimes = animes.sort(() => 0.5 - Math.random()).slice(0, count);
     
     container.innerHTML = "";
@@ -157,6 +207,7 @@ async function showRandomAnimes(count = 25) {
         img.src = anime.image;
         img.className = "item-image";
         img.draggable = true;
+        img.alt = anime.title;
         
         // Crear tooltip con el título
         const tooltip = document.createElement("span");
@@ -174,5 +225,5 @@ async function showRandomAnimes(count = 25) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    showRandomAnimes(20);
+    showRandomAnimes(15);
 });
