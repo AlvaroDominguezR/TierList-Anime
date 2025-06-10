@@ -82,8 +82,14 @@ body {
     flex-wrap: wrap;
 }
 
-.item-image.dragging {
-    opacity: 0.6;
+#selector-items.drag-over {
+    background-color: rgba(255, 255, 255, 0.1);
+    outline: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.item-container {
+    position: relative;
+    display: inline-block;
 }
 
 .item-image {
@@ -93,20 +99,56 @@ body {
     object-fit: cover;
     border-radius: 4px;
     cursor: grab;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
+}
 
+.item-image.dragging {
+    opacity: 0.6;
 }
 
 .item-image:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.item-container {
-    position: relative;
-    display: inline-block;
-    
+.item-tooltip {
+    visibility: hidden;
+    width: max-content;
+    max-width: 1000px;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 8px;
+    position: absolute;
+    z-index: 100;
+    bottom: 100%; /* Aparece arriba de la imagen  */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 12px;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-tooltip::after { /* Flecha del tooltip */
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+}
+
+.item-container:hover .item-tooltip { /* Mostrar tooltip al hacer hover */
+    visibility: visible;
+    opacity: 1;
 }
 
 .drop-zone {
@@ -126,52 +168,6 @@ body {
 /* Ajuste para las imágenes en los tiers */
 .row .item-image {
     margin: 0; /* Elimina margen dentro de los tiers */
-}
-
-.item-tooltip {
-    visibility: hidden;
-    width: max-content;
-    max-width: 1000px;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: white;
-    text-align: center;
-    border-radius: 4px;
-    padding: 5px 8px;
-    position: absolute;
-    z-index: 100;
-    bottom: 100%; /* Aparece arriba de la imagen */
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.2s;
-    font-size: 12px;
-    pointer-events: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Flecha del tooltip */
-.item-tooltip::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
-}
-
-/* Mostrar tooltip al hacer hover */
-.item-container:hover .item-tooltip {
-    visibility: visible;
-    opacity: 1;
-}
-
-#selector-items.drag-over {
-    background-color: rgba(255, 255, 255, 0.1);
-    outline: 2px dashed rgba(255, 255, 255, 0.3);
 }
 
 
