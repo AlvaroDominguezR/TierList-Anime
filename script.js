@@ -160,34 +160,71 @@ async function getTopAnime(limit = 100) {
     }
 }
 
-async function showRandomAnimes(count = 25) {
+async function showRandomAnimes(count = 15)
+{
     const container = $('#selector-items');
     container.innerHTML = "<p>Seleccionando animes aleatoriamente...</p>";
 
-    const animes = await getTopAnime(100); //Top del cual se eligen los animes
-    const randomAnimes = animes.sort(() => 0.5 - Math.random()).slice(0, count);
+    const existingAnimes = getExistingAnimes();
+
+    const allAnimes = await getTopAnime(300); //Top del cual se eligen los animes
+    const availableAnimes = allAnimes.filter(anime =>
+        !existingAnimes.includes(anime.title));
+
+    if (availableAnimes.length === 0)  // Verificar si hay suficientes animes disponibles
+    {
+        showCustomAlert("¡Máximo número de animes añadidos!")
+        container.innerHTML = "";
+        return;
+    }
+        
+    const adjustedCount = Math.min(count, availableAnimes.length);
+    if(adjustedCount < count)
+    {
+        showCustomAlert(`Solo quedan ${availableAnimes.length} animes disponibles. Mostrando ${adjustedCount}.`);
+    }
+
+    const randomAnimes = availableAnimes
+        .sort(() => 0.5 - Math.random())
+        .slice(0,count);
 
     container.innerHTML = "";
-    randomAnimes.forEach(anime => {
-        const imgContainer = document.createElement("div");
-        imgContainer.className = "item-container";
-
-        const img = document.createElement("img");
-        img.src = anime.image;
-        img.className = "item-image";
-        img.draggable = true;
-        img.alt = anime.title;
-
-        const tooltip = document.createElement("span");
-        tooltip.className = "item-tooltip";
-        tooltip.textContent = anime.title;
-
-        imgContainer.appendChild(img);
-        imgContainer.appendChild(tooltip);
-        container.appendChild(imgContainer);
+    randomAnimes.forEach(anime =>
+    {
+        createAnimeItem(anime, container);
     });
 
     setupDragAndDrop();
+}
+
+function getExistingAnimes()
+{
+    const existing = [];
+    document.querySelectorAll('.tier .item-image').forEach(img =>
+    {
+        if(img.alt) existing.push(img.alt);
+    });
+    return existing;
+}
+
+function createAnimeItem(anime, container)
+{
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "item-container";
+
+    const img = document.createElement("img");
+    img.src = anime.image;
+    img.className = "item-image";
+    img.draggable = true;
+    img.alt = anime.title; // Usamos alt para identificar duplicados
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "item-tooltip";
+    tooltip.textContent = anime.title;
+
+    imgContainer.appendChild(img);
+    imgContainer.appendChild(tooltip);
+    container.appendChild(imgContainer);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -209,6 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return; // Detiene la ejecución si hay error
         }
 
+        // Mensaje si hay muchos duplicados
+        const existingCount = getExistingAnimes().length;
+        if (existingCount > 70) { // Si ya hay 70+ animes en tiers
+        if (!confirm(`Ya tienes ${existingCount} animes en los tiers. ¿Seguro quieres agregar más?`)) {
+            return;
+        }
+    }
         showRandomAnimes(count); // Si pasa la validación, ejecuta la función principal
     });
     
@@ -221,3 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         });
 });
+
+function showCustomAlert(message) {
+    const alert = $('#custom-alert');
+    alert.textContent = message;
+    alert.classList.add('show');
+    
+    setTimeout(() => {
+        alert.classList.remove('show');
+    }, 3000);
+}
