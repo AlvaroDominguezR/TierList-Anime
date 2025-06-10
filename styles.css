@@ -76,8 +76,8 @@ body {
     border: 1px solid #666;
     width: 100%;
     height: 150px;
-    margin-top: 80px;
-    margin-bottom: 100px;
+    margin-top: 20px;
+    margin-bottom: 40px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -171,6 +171,62 @@ body {
 }
 
 
+.buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 20px;
+    background: #222;
+    border-radius: 8px;
+}
+
+.number-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.number-selector label {
+    font-weight: bold;
+    color: #ddd;
+}
+
+#anime-count {
+    width: 50px;
+    padding: 5px;
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#apply-count {
+    padding: 5px 15px;
+    background: var(--color-a);
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#apply-count:hover {
+    transform: scale(1.05);
+    background: var(--color-s);
+}
+
+#anime-count:invalid {
+    border-color: #ff4444;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
 
 @media (max-width: 600px) {
 .label {

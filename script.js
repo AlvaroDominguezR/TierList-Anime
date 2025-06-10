@@ -164,7 +164,7 @@ async function showRandomAnimes(count = 25) {
     const container = $('#selector-items');
     container.innerHTML = "<p>Seleccionando animes aleatoriamente...</p>";
 
-    const animes = await getTopAnime(300); //Top del cual se eligen los animes
+    const animes = await getTopAnime(100); //Top del cual se eligen los animes
     const randomAnimes = animes.sort(() => 0.5 - Math.random()).slice(0, count);
 
     container.innerHTML = "";
@@ -191,5 +191,33 @@ async function showRandomAnimes(count = 25) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    showRandomAnimes(15);
+    const applyBtn = document.getElementById('apply-count');
+    const animeCountInput = document.getElementById('anime-count');
+    
+    // Carga inicial con valor por defecto
+    showRandomAnimes(parseInt(animeCountInput.value));
+    
+    // Evento para el botón
+    applyBtn.addEventListener('click', () => {
+        const count = parseInt(animeCountInput.value);
+
+        if(count < 5 || count > 30 || isNaN(count))
+        {
+            showToast('Ingresa un número entre 5 y 30'); 
+            animeCountInput.value = 10;
+            animeCountInput.focus();
+            return; // Detiene la ejecución si hay error
+        }
+
+        showRandomAnimes(count); // Si pasa la validación, ejecuta la función principal
+    });
+    
+    // Validación mientras escribe
+    animeCountInput.addEventListener('input', () =>
+        {
+            let value = parseInt(animeCountInput.value);
+            if(isNaN(value)) value = 10;
+            animeCountInput.value = Math.max(5, Math.min(30, value));
+        
+        });
 });
