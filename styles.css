@@ -6,6 +6,7 @@
 --color-c: #fdff7f;
 --color-d: #bfff7f;
 --color-e: #7fff7f;
+--color-nv: #7FFFFF;
 }
 
 *, *::before, *::after {
@@ -189,6 +190,44 @@ body {
 .number-selector label {
     font-weight: bold;
     color: #ddd;
+}
+
+#reset-btn {
+    padding: 8px 16px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 10px;
+}
+
+#reset-btn:hover {
+    background: #ff6666;
+    transform: scale(1.05);
+}
+
+#reset-btn:active {
+    transform: scale(0.98);
+}
+
+#capture-btn {
+    padding: 8px 16px;
+    background: #4CAF50; /* Verde */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 10px;
+}
+
+#capture-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
 }
 
 #anime-count {

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
     <title>Tier Maker</title>
-    
 </head>
 
 <body>
@@ -21,6 +21,7 @@
         <div class="row"><aside class="label" style="--level: var(--color-c)"><span contenteditable="true">C</span></aside></div>
         <div class="row"><aside class="label" style="--level: var(--color-d)"><span contenteditable="true">D</span></aside></div>
         <div class="row"><aside class="label" style="--level: var(--color-e)"><span contenteditable="true">E</span></aside></div>
+        <div class="row"><aside class="label" style="--level: var(--color-nv)"><span contenteditable="true">No Visto</span></aside></div>
     </section>
 
     <section class="buttons">
@@ -29,6 +30,8 @@
             <input type="number" id="anime-count" min="5" max="30" value="10">
             <button id="apply-count">Aplicar</button>
         </div>
+        <button id="reset-btn">Reiniciar Tiers</button> 
+        <button id="capture-btn">Guardar la Imagen</button>
     </section>
 
     <section id="selector-items"></section>

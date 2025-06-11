@@ -167,7 +167,7 @@ async function showRandomAnimes(count = 15)
 
     const existingAnimes = getExistingAnimes();
 
-    const allAnimes = await getTopAnime(300); //Top del cual se eligen los animes
+    const allAnimes = await getTopAnime(50); //Top del cual se eligen los animes
     const availableAnimes = allAnimes.filter(anime =>
         !existingAnimes.includes(anime.title));
 
@@ -186,7 +186,7 @@ async function showRandomAnimes(count = 15)
 
     const randomAnimes = availableAnimes
         .sort(() => 0.5 - Math.random())
-        .slice(0,count);
+        .slice(0, adjustedCount);
 
     container.innerHTML = "";
     randomAnimes.forEach(anime =>
@@ -230,6 +230,7 @@ function createAnimeItem(anime, container)
 document.addEventListener('DOMContentLoaded', () => {
     const applyBtn = document.getElementById('apply-count');
     const animeCountInput = document.getElementById('anime-count');
+    const resetBtn = document.getElementById('reset-btn');
     
     // Carga inicial con valor por defecto
     showRandomAnimes(parseInt(animeCountInput.value));
@@ -249,22 +250,72 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mensaje si hay muchos duplicados
         const existingCount = getExistingAnimes().length;
         if (existingCount > 70) { // Si ya hay 70+ animes en tiers
-        if (!confirm(`Ya tienes ${existingCount} animes en los tiers. ¿Seguro quieres agregar más?`)) {
+        if (!confirm(`Ya tienes ${existingCount} animes en los tiers. ¿Seguro quieres agregar más?`))
+        {
             return;
         }
     }
         showRandomAnimes(count); // Si pasa la validación, ejecuta la función principal
     });
-    
-    // Validación mientras escribe
-    animeCountInput.addEventListener('input', () =>
+
+
+    function resetTiers()
+    {
+        const selectorItems = document.getElementById('selector-items');
+        const allItems = document.querySelectorAll('.tier .item-container');
+
+        if(allItems.length === 0)
+        {
+            showCustomAlert('No hay animes en los tiers para reiniciar');
+            return;
+        }
+
+        allItems.forEach(item => // Mover cada item de vuelta al selector
+        {
+            selectorItems.appendChild(item);
+        });
+
+        showCustomAlert('¡Tiers reiniciados!');
+    }
+        
+    resetBtn.addEventListener('click', resetTiers); // Evento para el botón de reinicio
+
+    animeCountInput.addEventListener('input', () => // Validación mientras escribe
         {
             let value = parseInt(animeCountInput.value);
             if(isNaN(value)) value = 10;
             animeCountInput.value = Math.max(5, Math.min(30, value));
         
         });
-});
+
+        function captureTiers() {
+        const tierSection = document.querySelector('.tier');
+        
+        // Opciones de html2canvas (personalizables)
+        html2canvas(tierSection, {
+            backgroundColor: '#111', // Fondo oscuro (como tu diseño)
+            scale: 2, // Mejor calidad
+            logging: false, // Desactiva logs en consola
+            allowTaint: true,
+            useCORS: true // Para imágenes externas (como las de los animes)
+        }).then(canvas => {
+            // Crear enlace de descarga
+            const link = document.createElement('a');
+            link.download = 'mi-tier-de-animes.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            // Opcional: Mostrar feedback
+            showCustomAlert('¡Imagen guardada!');
+        }).catch(err => {
+            console.error('Error al capturar:', err);
+            showCustomAlert('Error al guardar la imagen');
+        });
+    }
+
+    // Evento para el botón de captura
+    document.getElementById('capture-btn').addEventListener('click', captureTiers);
+    });
 
 function showCustomAlert(message) {
     const alert = $('#custom-alert');
@@ -275,3 +326,6 @@ function showCustomAlert(message) {
         alert.classList.remove('show');
     }, 3000);
 }
+
+
+
