@@ -19,7 +19,7 @@ body {
     font-family: system-ui, sans-serif;
     margin: 0 auto;
     max-width: 1200px;
-    padding-inline: 32px;
+    padding: 20px 16px;
     user-select: none;
 }
 
@@ -33,7 +33,6 @@ body {
 #top-header img {
     max-width: 12rem;
     height: auto;
-    margin-top: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
@@ -45,11 +44,13 @@ body {
 }
 
 .row {
+    height: auto;
     display: flex;
     position: relative;
     flex-direction: row;
     border-bottom: 1px solid #111;
     transition: background-color 0.2s;
+    align-items: stretch;
 }
 
 .row.drag-over {
@@ -61,26 +62,31 @@ body {
     background: var(--level, #09f);
     color: #333;
     font-weight: bold;
-    width: 110px;
-    height: 100px;
+    min-width: 110px;
+    min-height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
+    transition: transform 0.2s, height 0.2s;
+    align-self: stretch;
+    
 }
 
 .row.drag-over .label {
     transform: scale(1.05);
 }
 
+
 #selector-items {
     border: 1px solid #666;
     width: 100%;
-    height: 150px;
     margin-top: 20px;
     margin-bottom: 40px;
     display: flex;
     flex-wrap: wrap;
+    min-height: 100px; /* Opcional: mantiene al menos algo de altura */
+    max-height: 400px; /* Opcional: limita para que no crezca infinitamente */
+    
 }
 
 #selector-items.drag-over {
