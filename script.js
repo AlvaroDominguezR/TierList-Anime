@@ -1,5 +1,9 @@
 let draggedElement = null;
 let sourceContainer = null;
+let placeholder = document.createElement('div');
+placeholder.className = 'preview-placeholder';
+
+//aqui deberia ser
 
 const $ = el => document.querySelector(el);
 const $$ = el => document.querySelectorAll(el);
@@ -12,15 +16,26 @@ function handleDragStart(e) {
     sourceContainer = e.target.parentNode;
 
     draggedElement.classList.add('dragging');
-    e.dataTransfer.setData('text/plain', e.target.src);
-    e.dataTransfer.effectAllowed = 'move';
+    
+    setTimeout(() =>
+    {
+        draggedElement.style.opacity = "0"; // Oculta la imagen original
+    }, 0);
 }
 
 function handleDragEnd(e) {
     if (!e.target.classList.contains('item-image')) return;
 
     draggedElement.classList.remove('dragging');
+    draggedElement.style.opacity = "1"
+    
     $$('.drag-over').forEach(el => el.classList.remove('drag-over'));
+
+    if(placeholder && placeholder.parentNode)
+    {
+        placeholder.remove();
+    }
+
     draggedElement = null;
     sourceContainer = null;
 }
@@ -28,6 +43,56 @@ function handleDragEnd(e) {
 function handleDragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+
+    const zone =e.currentTarget;
+    if(!zone.classList.contains('drop-zone') && zone.id !== 'selector-items') return;
+
+    const afterElement = getDragAfterElement(zone, e.clientX);
+
+    if(draggedElement && (!placeholder.firstChild || placeholder.dataset.src !== draggedElement.src))
+    {
+        placeholder.innerHTML = '';
+
+        const clonedImage = draggedElement.cloneNode();
+        clonedImage.classList.add('placeholder-image');
+        clonedImage.draggable = false;
+
+        placeholder.appendChild(clonedImage);
+        placeholder.dataset.src = draggedElement.src; // Guardamos para evitar clonar innecesariamente
+    }
+
+    if(placeholder.parentNode !== zone) // Mover el único placeholder al nuevo contenedor
+    {
+        placeholder.remove();
+    }
+
+    if(afterElement == null)
+    {
+        zone.appendChild(placeholder);
+    }
+    else
+    {
+        zone.insertBefore(placeholder, afterElement);
+    }
+
+}
+
+function getDragAfterElement(container, x)
+{
+    const elements = [...container.querySelectorAll('.item-container:not(.dragging)')];
+    return elements.reduce((closest, child) =>
+    {
+        const box = child.getBoundingClientRect();
+        const offset = x - box.left - box.width / 2;
+        if (offset < 0 && offset > closest.offset)
+        {
+            return { offset: offset, element: child };
+        }
+        else
+        {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 function handleDrop(e) {
@@ -44,15 +109,15 @@ function handleDrop(e) {
     if (!dropZone) return;
 
     // Reordenamiento dentro de los tiers
-    const targetContainer = target.closest('.item-container');
-    if (targetContainer && dropZone.contains(targetContainer) && draggedElement !== targetContainer.querySelector('.item-image')) {
-        dropZone.insertBefore(sourceContainer, targetContainer);
-    } else if (!isSelector) {
-        dropZone.appendChild(sourceContainer);
-    } else {
+    const placeholder = dropZone.querySelector('.preview-placeholder');
+    if (placeholder)
+    {
+        const newContainer = isSelector ? document.createElement('div') : sourceContainer;
+        if(isSelector)
+        {
+            newContainer.className = 'item-container';
+        }
         // Al selector, crear nuevo contenedor con tooltip
-        const newContainer = document.createElement('div');
-        newContainer.className = 'item-container';
 
         const tooltip = document.createElement('span');
         tooltip.className = 'item-tooltip';
@@ -60,7 +125,13 @@ function handleDrop(e) {
 
         newContainer.appendChild(draggedElement);
         newContainer.appendChild(tooltip);
-        dropZone.appendChild(newContainer);
+        dropZone.insertBefore(newContainer, placeholder)
+        placeholder.remove();
+    }
+
+    if (placeholder.parentNode)
+    {
+        placeholder.remove();
     }
 
     draggedElement.classList.remove('dragging');
@@ -87,7 +158,8 @@ function handleDragLeave(e) {
     if (target.classList.contains('drop-zone') || target === $('#selector-items')) {
         target.classList.remove('drag-over');
 
-        if (target.classList.contains('drop-zone')) {
+        if (target.classList.contains('drop-zone'))
+        {
             target.closest('.row').classList.remove('drag-over');
         }
     }
@@ -116,14 +188,16 @@ function setupDragAndDrop() {
     itemsSection.addEventListener('dragenter', handleDragEnter);
     itemsSection.addEventListener('dragleave', handleDragLeave);
 
-    document.addEventListener('dragstart', (e) => {
+    document.addEventListener('dragstart', (e) =>
+    {
         if (e.target.classList.contains('item-image')) {
             handleDragStart(e);
         }
     });
 
     document.addEventListener('dragend', (e) => {
-        if (e.target.classList.contains('item-image')) {
+        if (e.target.classList.contains('item-image'))
+        {
             handleDragEnd(e);
         }
     });
