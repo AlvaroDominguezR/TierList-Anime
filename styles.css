@@ -86,6 +86,8 @@ body {
     flex-wrap: wrap;
     min-height: 100px; /* Opcional: mantiene al menos algo de altura */
     max-height: 400px; /* Opcional: limita para que no crezca infinitamente */
+    align-content: flex-start;
+    gap: 4px; /* Espaciado consistente para evitar saltos */
     
 }
 
@@ -98,6 +100,10 @@ body {
     position: relative;
     display: inline-block;
     transition: transform 0.2s ease-in-out;
+}
+
+.item-container.dragging {
+    transition: none;
 }
 
 .item-image {
@@ -113,6 +119,7 @@ body {
 
 .item-image.dragging {
     opacity: 0.6;
+    transition: none;
 }
 
 .item-image:hover {
@@ -167,7 +174,7 @@ body {
     align-content: flex-start;
     background-color: rgba(255, 255, 255, 0.03);
     padding: 5px;
-    }
+}
 
 .row.drag-over .drop-zone {
     background-color: rgba(255, 255, 255, 0.1);
@@ -177,7 +184,6 @@ body {
 .row .item-image {
     margin: 0; /* Elimina margen dentro de los tiers */
 }
-
 
 .buttons {
     display: flex;
@@ -307,6 +313,7 @@ body {
     border-radius: 8px;
     opacity: 0.7;
     filter: grayscale(30%);
+    transition: none;
 }
 
 .dragging {
@@ -326,25 +333,49 @@ body {
     75% { transform: translateX(5px); }
 }
 
-@media (max-width: 600px) {
-.label {
-width: 80px;
-height: 80px;
-font-size: 16px; /* Texto más pequeño */
-}
-
-.item-image {
-    width: 70px;  /* Un poco más pequeño en móviles */
-    height: 80px;
-    margin: 1px;  /* Mantienes el espaciado ajustado */
+@media (max-width: 768px) {
+    /* Estilos base para todos los dispositivos móviles */
+    .label {
+        width: 70px;
+        height: 80px;
+        font-size: 15px;
+    }
     
-}
-
-body {
-padding-inline: 16px; /* Reduce el margen lateral */
-}
-
-#top-header img {
-max-width: 8rem; /* Imagen del header más pequeña */
-}
+    .item-image {
+        width: 65px;
+        height: 75px;
+        margin: 1px;
+    }
+    
+    body {
+        padding: 15px;
+    }
+    
+    #top-header img {
+        max-width: 8rem;
+    }
+    
+    /* Ajustes adicionales para pantallas muy pequeñas */
+    @media (max-width: 500px) {
+        .label {
+        min-width: 60px;
+        min-height: 70px;
+        font-size: 14px;
+    }
+    
+    .item-image {
+        width: 60px;
+        height: 70px;
+    }
+    
+    .buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .number-selector {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    }
 }
